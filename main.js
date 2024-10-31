@@ -1,45 +1,61 @@
-class Pokemon {
-    constructor(name, health, level, healthBarId, healthTextId) {
-        this.name = name;
-        this.maxHealth = health;
-        this.currentHealth = health;
-        this.level = level;
-        this.healthBar = document.getElementById(healthBarId);
-        this.healthText = document.getElementById(healthTextId);
+// Створюємо об'єкти для персонажа та ворога з відповідними методами
+const character = {
+    name: "Pikachu",
+    level: 1,
+    health: 100,
+    maxHealth: 100,
+    progressBar: document.getElementById("progressbar-character"),
+    healthText: document.getElementById("health-character"),
+    attack: function(target) {
+      const damage = 10;
+      target.takeDamage(damage);
+      console.log(`${this.name} використовує Thunder Jolt і завдає ${damage} пошкоджень ${target.name}!`);
+    },
+    specialAttack: function(target) {
+      const damage = 20;
+      target.takeDamage(damage);
+      console.log(`${this.name} використовує Special Attack і завдає ${damage} пошкоджень ${target.name}!`);
+    },
+    takeDamage: function(amount) {
+      this.health = Math.max(0, this.health - amount);
+      this.updateHealth();
+    },
+    updateHealth: function() {
+      const healthPercentage = (this.health / this.maxHealth) * 100;
+      this.progressBar.style.width = `${healthPercentage}%`;
+      this.healthText.textContent = `${this.health} / ${this.maxHealth}`;
     }
-
-    takeDamage(damage) {
-        this.currentHealth = Math.max(this.currentHealth - damage, 0);
-        this.updateHealthBar();
+  };
+  
+  const enemy = {
+    name: "Charmander",
+    level: 1,
+    health: 100,
+    maxHealth: 100,
+    progressBar: document.getElementById("progressbar-enemy"),
+    healthText: document.getElementById("health-enemy"),
+    attack: function(target) {
+      const damage = 8;
+      target.takeDamage(damage);
+      console.log(`${this.name} атакує та завдає ${damage} пошкоджень ${target.name}!`);
+    },
+    takeDamage: function(amount) {
+      this.health = Math.max(0, this.health - amount);
+      this.updateHealth();
+    },
+    updateHealth: function() {
+      const healthPercentage = (this.health / this.maxHealth) * 100;
+      this.progressBar.style.width = `${healthPercentage}%`;
+      this.healthText.textContent = `${this.health} / ${this.maxHealth}`;
     }
-
-    updateHealthBar() {
-        const healthPercentage = (this.currentHealth / this.maxHealth) * 100;
-        this.healthBar.style.width = `${healthPercentage}%`;
-
-        if (healthPercentage > 60) {
-            this.healthBar.className = "health";
-        } else if (healthPercentage > 30) {
-            this.healthBar.className = "health low";
-        } else {
-            this.healthBar.className = "health critical";
-        }
-        this.healthText.innerText = `${this.currentHealth} / ${this.maxHealth}`;
-    }
-}
-
-const pikachu = new Pokemon("Pikachu", 100, 1, "progressbar-character", "health-character");
-const charmander = new Pokemon("Charmander", 100, 1, "progressbar-enemy", "health-enemy");
-
-function battle(attacker, defender) {
-    const damage = Math.floor(Math.random() * 20) + 5;
-    defender.takeDamage(damage);
-}
-
-document.getElementById("btn-kick").addEventListener("click", () => {
-    battle(pikachu, charmander);
-});
-
-document.getElementById("btn-special").addEventListener("click", () => {
-    battle(charmander, pikachu);
-});
+  };
+  
+  // Додаємо обробники подій для кнопок
+  document.getElementById("btn-kick").addEventListener("click", () => {
+    character.attack(enemy);
+  });
+  
+  document.getElementById("btn-special").addEventListener("click", () => {
+    character.specialAttack(enemy);
+  });
+  
